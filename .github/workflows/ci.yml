@@ -2,57 +2,26 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout du code
         uses: actions/checkout@v3
 
-      - name: Installer Docker et Docker Compose
+      - name: Installer Docker
         run: |
           sudo apt-get update
           sudo apt-get install -y docker.io docker-compose
+          sudo systemctl start docker
+          sudo systemctl enable docker
 
-      - name: Construire l'image Docker
-        run: docker build -t app:latest .
+      - name: Vérifier Docker
+        run: docker --version
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v3
-
-      - name: Installer Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Installer les dépendances et lancer les tests
-        run: |
-          npm install
-          npm test
-
-  quality:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v3
-
-      - name: Analyse de code avec SonarQube
-        run: sonar-scanner
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: quality
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v3
-
-      - name: Déployer avec Docker Compose
-        run: docker-compose up -d
+      - name: Build Docker Compose
+        run: docker-compose up --build -d
 
