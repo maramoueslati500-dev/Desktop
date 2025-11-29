@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Déclenche le workflow à chaque push sur main
 on:
   push:
     branches: [ main ]
@@ -10,23 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Récupérer le code
-      - name: Checkout du code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # 2️⃣ Installer et configurer Docker
-      - name: Setup Docker
+      - name: Installer Docker
         uses: docker/setup-docker@v2
 
-      # 3️⃣ Vérifier que Docker est installé
       - name: Vérifier Docker
         run: docker --version
 
-      # 4️⃣ Lancer Docker Compose pour builder les conteneurs
-      - name: Build et lancer Docker Compose
+      - name: Lancer Docker Compose
         run: docker-compose up --build -d
-
-      # 5️⃣ (Optionnel) Afficher les conteneurs en cours
-      - name: Liste des conteneurs
-        run: docker ps
 
