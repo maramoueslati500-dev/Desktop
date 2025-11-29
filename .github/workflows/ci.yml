@@ -18,5 +18,5 @@ jobs:
         run: docker --version
 
       - name: Lancer Docker Compose
-        run: docker-compose up --build -d
+        run: sudo docker-compose up --build -d
 
