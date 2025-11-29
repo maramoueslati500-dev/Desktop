@@ -21,5 +21,8 @@ jobs:
           docker compose version
 
       - name: Lancer les conteneurs
-        run: docker compose up --build -d
+        run: docker compose -f .docker/docker-compose.yml up --build -d
+       
+      - name: Vérifier le docker-compose.yml
+         run: ls -l
 
