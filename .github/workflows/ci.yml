@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+# Déclenchement du pipeline à chaque push sur main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Installer Docker et Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
+
+      - name: Construire l'image Docker
+        run: docker build -t app:latest .
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Installer les dépendances et lancer les tests
+        run: |
+          npm install
+          npm test
+
+  quality:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Analyse de code avec SonarQube
+        run: sonar-scanner
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Déployer avec Docker Compose
+        run: docker-compose up -d
+
