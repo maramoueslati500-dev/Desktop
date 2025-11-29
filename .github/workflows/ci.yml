@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Déclenchement du pipeline à chaque push sur main
 on:
   push:
     branches: [ "main" ]
